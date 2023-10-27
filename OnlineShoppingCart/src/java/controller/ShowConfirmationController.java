@@ -1,28 +1,27 @@
-package controller;
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+package controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
-import java.util.List;
+import java.util.HashMap;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import model.Calculator;
 import model.Products;
+import model.Shoppingcart;
 
 /**
  *
  * @author iarsk
  */
-public class AddToShoppingCart extends HttpServlet {
+public class ShowConfirmationController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,47 +35,32 @@ public class AddToShoppingCart extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String[] checkbArray = request.getParameterValues("CBDVDName");
-        List<Products> pdList = CallProductTable.findAllProduct();
-        int unit, unitPrice = 0, totalPrice = 0;
-        for(String MVname : checkbArray){  // call all Movie name    
-            for(Products pd : pdList){ 
-                // getParameterValues return MVname[escape cha]  
-                if(MVname.trim().equals(pd.getMovie()) && !request.getParameter(MVname.trim()).equals("")){ 
-                    unit = Integer.parseInt(request.getParameter(MVname.trim())); // Call unit from Text Input
-                    request.setAttribute(MVname.trim()+ "_Quantity", unit);
-                    //unitPrice = unit *  pd.getPrice(); // Price per Unit
-                    unitPrice = Calculator.unitCalculator( pd.getPrice(), unit);
-                    totalPrice = Calculator.totalCalculator(totalPrice, unitPrice); // Total price
-                    
-                    request.setAttribute(MVname.trim() + "_unitPrice", unitPrice);
-                }
-            }
-        }
-        request.setAttribute("totalPrice", totalPrice);
         HttpSession session = request.getSession();
-        
-        // remove old session Attr
-        Enumeration<String> sessionAttrList = session.getAttributeNames();    
+        Enumeration<String> sessionAttrList = session.getAttributeNames();
+        HashMap<String, Integer> sessionHM = new HashMap<>();
         while(sessionAttrList.hasMoreElements()){
             String singleAttr = sessionAttrList.nextElement();
             if(!singleAttr.contains("WELD_S_HASH")){
-                session.removeAttribute(singleAttr);
+                sessionHM.put(singleAttr,(int) session.getAttribute(singleAttr));
             }
-        } 
-
-        Enumeration<String> AttrList = request.getAttributeNames();    
-        while(AttrList.hasMoreElements()){
-            String singleAttr = AttrList.nextElement();
-            if(singleAttr.contains("_Quantity")){
-                session.setAttribute(singleAttr.replace("_Quantity", ""), request.getAttribute(singleAttr));
+        }
+        session.invalidate();
+        
+        //Harry Potter 15
+        synchronized(getServletContext()){
+            int lastestCartID = CallProductTable.findLastestCartID();
+            getServletContext().setAttribute("lastestCartID", lastestCartID + 1);
+            for(String MVname : sessionHM.keySet()) {
+                Products pd = CallProductTable.findProductByMovie(MVname);
+                Shoppingcart spCart = new Shoppingcart((int) getServletContext().getAttribute("lastestCartID"), pd.getId());
+                spCart.setQuantity(sessionHM.get(MVname));
+                CallProductTable.insertShoppingCart(spCart);
             }
-        } 
-        request.getRequestDispatcher("cart.jsp").forward(request, response);
+        }
+        request.setAttribute("totalPrice", request.getParameter("totalPrice"));
+        request.getRequestDispatcher("ShowConfirmation.jsp").forward(request, response);
     }
     
-   
-
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.

@@ -4,9 +4,17 @@
         <servlet-name>AddToShoppingCart</servlet-name>
         <servlet-class>controller.AddToShoppingCart</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ShowConfirmationController</servlet-name>
+        <servlet-class>controller.ShowConfirmationController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>AddToShoppingCart</servlet-name>
         <url-pattern>/AddToShoppingCart</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ShowConfirmationController</servlet-name>
+        <url-pattern>/ShowConfirmationController</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

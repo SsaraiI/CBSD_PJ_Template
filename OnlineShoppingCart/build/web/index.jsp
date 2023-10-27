@@ -4,6 +4,7 @@
     Author     : iarsk
 --%>
 
+<%@page import="java.util.Enumeration"%>
 <%@page import="model.Products"%>
 <%@page import="java.util.List"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -37,7 +38,7 @@
                     %>
                     <tr>
                         <td>
-                            <%= "<input type=\"checkbox\" name=\"CBDVDName\" value=\"" + pd.getMovie() + " \" />"%>
+                            <%= "<input type=\"checkbox\" name=\"CBDVDName\" value=\"" + pd.getMovie() + " \" id = \""+ pd.getMovie() +"\" />"%>
                             <%= pd.getMovie() %>
                         </td>
                         <td>
@@ -55,7 +56,7 @@
                         </td>
                         <td>
                             <div style="text-align: center;">
-                                <%= "<input type=\"text\" name=\"" + pd.getMovie() + "\" value=\"\" size=\"5\" style=\"text-align: center;\" />"%>
+                                <%= "<input type=\"text\" name=\"" + pd.getMovie() + "\" value=\"\" size=\"5\" style=\"text-align: center;\" id = \""+ pd.getMovie() +"_Quantity\" />"%>
                             </div>
                         </td>
                     </tr>
@@ -67,5 +68,20 @@
             
         </form>
         </center>
+            <% 
+                session = request.getSession(); 
+                if(!session.isNew()){
+                    Enumeration<String> sessionAttrList = session.getAttributeNames();
+                    out.println("<script>");
+                    while(sessionAttrList.hasMoreElements()){
+                        String singleAttr = sessionAttrList.nextElement();
+                        if(!singleAttr.contains("WELD_S_HASH")){
+                            out.println("document.getElementById(\""+ singleAttr +"\").checked = true");
+                            out.println("document.getElementById(\""+ singleAttr +"_Quantity\").value =\"" + session.getAttribute(singleAttr) + "\"" );
+                        }
+                   } 
+                    out.println("</script>");
+                }
+            %>
     </body>
 </html>

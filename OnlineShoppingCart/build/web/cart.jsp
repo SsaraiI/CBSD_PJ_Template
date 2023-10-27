@@ -18,7 +18,7 @@
     <body>        
         <center>
             <h1>Shopping Cart</h1>
-            <form name="AddToCartForm" action="ShowComfirmation.jsp" method="POST">
+            <form name="AddToCartForm" action="ShowConfirmationController" method="POST">
                 <table border="1" width="30%" cellspacing="1" cellpadding="1" >
                     <thead>
                         <tr>
@@ -56,7 +56,7 @@
                                 <%= Integer.parseInt(request.getParameter(MVname.trim()))%>
                             </td>
                             <td>
-                                <%= request.getAttribute(MVname + "_unitPrice")%>
+                                <%= request.getAttribute(MVname.trim() + "_unitPrice")%>
                             </td>
                         </tr>
                         <%}}}%>
@@ -73,7 +73,7 @@
                     </tbody>
                 </table>                
                     <input type="submit" value="Check out" name="BTCheckOut" />
-                    <%= "<input type=\"hidden\" value=\"" + request.getAttribute("totalPrice") + "\"name=\"BTHidden\">" %>
+                    <%= "<input type=\"hidden\" value=\"" + request.getAttribute("totalPrice") + "\"name=\"totalPrice\">" %>
             </form>
         </center>               
     </body>
