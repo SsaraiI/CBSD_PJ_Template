@@ -1,0 +1,71 @@
+<%-- 
+    Document   : index
+    Created on : Oct 14, 2023, 2:22:23 PM
+    Author     : iarsk
+--%>
+
+<%@page import="model.Products"%>
+<%@page import="java.util.List"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import = "model.Products"%>
+<%@page import = "controller.CallProductTable"%>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>JSP Page</title>
+    </head>
+    <body>
+        <center>
+        
+        <h1>DVD Catalog</h1>      
+        <form name="AddToCartForm" action="AddToShoppingCart" method="POST">        
+            <table border="1" width="30%" cellspacing="1" cellpadding="1" >
+                <thead>
+                    <tr>
+                        <th>DVD names</th>
+                        <th>Rating</th>
+                        <th>Year</th>
+                        <th>Price/Unit</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%
+                        List<Products> pdList = CallProductTable.findAllProduct();
+                        for(Products pd : pdList){
+                    %>
+                    <tr>
+                        <td>
+                            <%= "<input type=\"checkbox\" name=\"CBDVDName\" value=\"" + pd.getMovie() + " \" />"%>
+                            <%= pd.getMovie() %>
+                        </td>
+                        <td>
+                            <%= pd.getRating() %>
+                        </td>
+                        <td>
+                            <div style="text-align: center;">
+                                <%= pd.getYearcreate() %>
+                        </div>
+                        </td>
+                        <td>
+                            <div style="text-align: center;">
+                                <%= pd.getPrice() %>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="text-align: center;">
+                                <%= "<input type=\"text\" name=\"" + pd.getMovie() + "\" value=\"\" size=\"5\" style=\"text-align: center;\" />"%>
+                            </div>
+                        </td>
+                    </tr>
+                    <%}%>
+                </tbody>
+            </table>
+     
+            <input type="submit" value="Add To Cart" name="BTAddToCart" />
+            
+        </form>
+        </center>
+    </body>
+</html>
